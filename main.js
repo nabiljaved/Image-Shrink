@@ -103,6 +103,7 @@ const menu = [
     : []),
 ]
 
+//listening a message from rendered process
 ipcMain.on('image:minimize', (e, options) => {
   options.dest = path.join(os.homedir(), 'imageshrink')
   shrinkImage(options)
@@ -127,6 +128,7 @@ async function shrinkImage({ imgPath, quality, dest }) {
 //     Changed from shell.openItem() for v9
     shell.openPath(dest)
 
+    //sending a message to rendered process
     mainWindow.webContents.send('image:done')
   } catch (err) {
     log.error(err)
