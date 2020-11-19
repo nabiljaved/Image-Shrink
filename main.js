@@ -125,7 +125,11 @@ async function shrinkImage({ imgPath, quality, dest }) {
 
     log.info(files)
 
-//     Changed from shell.openItem() for v9
+//     Changed from shell.openItem() for v9 //it will open the path folder
+/*
+    https://www.electronjs.org/docs/api/shell
+    logs are inside : C:\Users\nabeel\AppData\Roaming\ImageShrink\logs
+ */
     shell.openPath(dest)
 
     //sending a message to rendered process
