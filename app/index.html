@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline'"
+    />
+    <link rel="stylesheet" href="css/all.min.css" />
+    <link rel="stylesheet" href="css/materialize.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>ImageShrink</title>
+  </head>
+  <body>
+    <div class="container center-align">
+      <h3 class="white-text"><img src="https://i.pinimg.com/originals/ee/b6/b8/eeb6b891f29aa8aac7e244af7e175b71.jpg" alt="" width="50" height="50">
+        ImageShrink</h3>
+      <p class="white-text">Choose an image to resize</p>
+      <form id="image-form">
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>Browse</span>
+            <input type="file" id="img" />
+          </div>
+
+          <div class="file-path-wrapper">
+            <input
+              type="text"
+              class="file-path validate white-text"
+              placeholder="Upload file"
+            />
+          </div>
+        </div>
+
+        <p>
+          <strong class="white-text">Quality:</strong>
+          <em class="white-text">The lower the quality, the smaller the file size</em>
+        </p>
+        <p class="range-field">
+          <input type="range" min="0" max="100" id="slider" />
+        </p>
+
+        <input type="submit" value="Resize" class="btn black" />
+      </form>
+
+      <div class="card output">
+        <div class="card-content">
+          Output Path: <span id="output-path"></span>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/materialize.min.js"></script>
+    <script>
+      const path = require('path')
+      const os = require('os')
+      const { ipcRenderer } = require('electron')
+
+      const form = document.getElementById('image-form')
+      const slider = document.getElementById('slider')
+      const img = document.getElementById('img')
+
+      document.getElementById('output-path').innerText = path.join(
+        os.homedir(),
+        'imageshrink'
+      )
+
+      //   Onsubmit
+      form.addEventListener('submit', (e) => {
+        e.preventDefault()
+
+        const imgPath = img.files[0].path
+        const quality = slider.value
+
+        ipcRenderer.send('image:minimize', {
+          imgPath,
+          quality,
+        })
+      })
+
+      //   On done
+      ipcRenderer.on('image:done', () => {
+        M.toast({
+          html: `Image resized to ${slider.value}% quality`,
+        })
+      })
+    </script>
+  </body>
+</html>
